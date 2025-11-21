@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guardare Signup Widget Test</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        background-color: #f3f4f6;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        width: 100%;
+        max-width: 600px;
+        margin-top: 2rem;
+      }
+      h1 {
+        color: #111827;
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+      p {
+        color: #6b7280;
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Sign Up for Guardare</h1>
+      <p>This is a demo of the embedded signup widget on a marketing site.</p>
+
+      <!-- Guardare Widget Container -->
+      <div id="guardare-signup-container"></div>
+    </div>
+
+    <!-- Guardare Widget Script -->
+    <!-- Pointing to DEV environment as requested -->
+    <script
+      src="https://dev.guardare.com/guardare-signup.js"
+      data-target="#guardare-signup-container"
+      data-return-url="https://dev.guardare.com/set-password/"
+    ></script>
+  </body>
+</html>
