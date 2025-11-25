@@ -4,57 +4,163 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Guardare Signup Widget Test</title>
+
     <style>
+      :root {
+        --bg: #f3f4f6;
+        --text: #111827;
+        --subtext: #6b7280;
+        --card: #ffffff;
+      }
+
+      .dark {
+        --bg: #1f2937;
+        --text: #f3f4f6;
+        --subtext: #9ca3af;
+        --card: #374151;
+      }
+
       body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-          Arial, sans-serif;
-        background-color: #f3f4f6;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
         display: flex;
         flex-direction: column;
         align-items: center;
         min-height: 100vh;
         margin: 0;
         padding: 20px;
+        transition: 0.25s ease background-color, 0.25s ease color;
       }
+
       .container {
-        background: white;
+        background: var(--card);
         padding: 2rem;
         border-radius: 1rem;
-        box-shadow:
-          0 4px 6px -1px rgba(0, 0, 0, 0.1),
-          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         width: 100%;
-        max-width: 600px;
+        max-width: 700px;
         margin-top: 2rem;
+        transition: 0.25s ease background-color;
       }
+
       h1 {
-        color: #111827;
         text-align: center;
-        margin-bottom: 1.5rem;
       }
+
       p {
-        color: #6b7280;
+        color: var(--subtext);
         text-align: center;
-        margin-bottom: 2rem;
+      }
+
+      .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin: 2rem 0;
+      }
+
+      select,
+      input {
+        padding: 0.5rem 0.75rem;
+        width: 100%;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+      }
+
+      button {
+        padding: 0.75rem 1rem;
+        border: none;
+        border-radius: 0.5rem;
+        background: #2563eb;
+        color: white;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      .toggle button {
+        background: #6b7280;
       }
     </style>
   </head>
+
   <body>
     <div class="container">
-      <h1>Sign Up for Guardare</h1>
-      <p>This is a demo of the embedded signup widget on a marketing site.</p>
+      <h1>Guardare Signup Widget Tester</h1>
+      <p>Test the widget across multiple Guardare environments.</p>
+
+      <!-- Dark Mode Toggle -->
+      <div class="toggle" style="text-align:center; margin-bottom: 1rem;">
+        <button onclick="toggleDarkMode()">Toggle Light/Dark Mode</button>
+      </div>
+
+      <!-- Input Controls -->
+      <div class="controls">
+        <div>
+          <label>Select Environment</label>
+          <select id="envSelect" onchange="updateFields()">
+            <option value="http://localhost:4173">localhost:4173</option>
+            <option value="https://dev.guardare.com">dev.guardare.com</option>
+            <option value="https://preview.guardare.com">preview.guardare.com</option>
+            <option value="https://portal.guardare.com">portal.guardare.com</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Return URL</label>
+          <input id="returnUrl" placeholder="https://dev.guardare.com/set-password/" />
+        </div>
+
+        <button onclick="loadWidget()">Load Widget</button>
+      </div>
+
+      <hr style="margin: 2rem 0; opacity: 0.3;" />
 
       <!-- Guardare Widget Container -->
       <div id="guardare-signup-container"></div>
     </div>
 
-    <!-- Guardare Widget Script -->
-    <!-- Pointing to DEV environment as requested -->
-    <script
-      src="https://portal.guardare.com/guardare-signup.js"
-      data-target="#guardare-signup-container"
-      data-return-url="https://portal.guardare.com/set-password/"
-    ></script>
+    <script>
+      // 🌙 Toggle Dark/Light Mode
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark");
+      }
+
+      // Auto-update return URL when selecting environment
+      function updateFields() {
+        const base = document.getElementById("envSelect").value;
+        document.getElementById("returnUrl").value = `${base}/set-password/`;
+      }
+
+      // 🔄 Load Widget Dynamically
+      function loadWidget() {
+        const base = document.getElementById("envSelect").value;
+        const ret = document.getElementById("returnUrl").value.trim();
+
+        // Remove existing widget script
+        const existing = document.getElementById("guardare-widget");
+        if (existing) existing.remove();
+
+        // Clear container
+        document.getElementById("guardare-signup-container").innerHTML = "";
+
+        // Create new script
+        const script = document.createElement("script");
+        script.id = "guardare-widget";
+        script.src = `${base}/guardare-signup.js`;
+        script.setAttribute("data-target", "#guardare-signup-container");
+        script.setAttribute("data-return-url", ret);
+
+        document.body.appendChild(script);
+
+        console.log("🔁 Widget Loaded from:", script.src);
+      }
+
+      // Set default return URL on load
+      updateFields();
+    </script>
   </body>
 </html>
