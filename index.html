@@ -40,17 +40,12 @@
         border-radius: 1rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         width: 100%;
-        max-width: 700px;
+        max-width: 750px;
         margin-top: 2rem;
         transition: 0.25s ease background-color;
       }
 
       h1 {
-        text-align: center;
-      }
-
-      p {
-        color: var(--subtext);
         text-align: center;
       }
 
@@ -81,8 +76,13 @@
         font-weight: 600;
       }
 
-      .toggle button {
-        background: #6b7280;
+      iframe {
+        width: 100%;
+        border: none;
+        min-height: 600px;
+        border-radius: 0.75rem;
+        background: var(--card);
+        transition: 0.25s ease background-color;
       }
     </style>
   </head>
@@ -90,14 +90,13 @@
   <body>
     <div class="container">
       <h1>Guardare Signup Widget Tester</h1>
-      <p>Test the widget across multiple Guardare environments.</p>
 
       <!-- Dark Mode Toggle -->
-      <div class="toggle" style="text-align:center; margin-bottom: 1rem;">
+      <div style="text-align:center;">
         <button onclick="toggleDarkMode()">Toggle Light/Dark Mode</button>
       </div>
 
-      <!-- Input Controls -->
+      <!-- Controls -->
       <div class="controls">
         <div>
           <label>Select Environment</label>
@@ -111,16 +110,28 @@
 
         <div>
           <label>Return URL</label>
-          <input id="returnUrl" placeholder="https://dev.guardare.com/set-password/" />
+          <input id="returnUrl" />
         </div>
 
-        <button onclick="loadWidget()">Load Widget</button>
+        <button onclick="loadWidget()">Load JS Widget</button>
       </div>
 
       <hr style="margin: 2rem 0; opacity: 0.3;" />
 
-      <!-- Guardare Widget Container -->
+      <!-- JS Widget Container -->
+      <h3 style="text-align:center;">JS Widget</h3>
       <div id="guardare-signup-container"></div>
+
+      <hr style="margin: 2rem 0; opacity: 0.3;" />
+
+      <!-- IFRAME EMBED -->
+      <h3 style="text-align:center;">Iframe Embed</h3>
+      <iframe
+        id="signupIframe"
+        src="https://preview.guardare.com/embed/sign-up"
+        allow="clipboard-write"
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+      ></iframe>
     </div>
 
     <script>
@@ -129,25 +140,31 @@
         document.body.classList.toggle("dark");
       }
 
-      // Auto-update return URL when selecting environment
+      // Update fields based on selected environment
       function updateFields() {
         const base = document.getElementById("envSelect").value;
+
+        // Update return URL input
         document.getElementById("returnUrl").value = `${base}/set-password/`;
+
+        // Update iframe SRC
+        const iframe = document.getElementById("signupIframe");
+        iframe.src = `${base}/embed/sign-up`;
       }
 
-      // 🔄 Load Widget Dynamically
+      // Load JS widget dynamically
       function loadWidget() {
         const base = document.getElementById("envSelect").value;
         const ret = document.getElementById("returnUrl").value.trim();
 
-        // Remove existing widget script
+        // Remove existing script
         const existing = document.getElementById("guardare-widget");
         if (existing) existing.remove();
 
         // Clear container
         document.getElementById("guardare-signup-container").innerHTML = "";
 
-        // Create new script
+        // Inject new script
         const script = document.createElement("script");
         script.id = "guardare-widget";
         script.src = `${base}/guardare-signup.js`;
@@ -156,10 +173,24 @@
 
         document.body.appendChild(script);
 
-        console.log("🔁 Widget Loaded from:", script.src);
+        console.log("JS Widget Loaded:", script.src);
       }
 
-      // Set default return URL on load
+      // Listen for iframe resize messages
+      window.addEventListener("message", (e) => {
+        const base = document.getElementById("envSelect").value;
+        const iframe = document.getElementById("signupIframe");
+
+        const allowedOrigin = base.replace("/embed/sign-up", "");
+
+        if (!e.origin.includes(allowedOrigin)) return;
+
+        if (e.data?.type === "resize" && e.data?.data?.height) {
+          iframe.style.height = e.data.data.height + "px";
+        }
+      });
+
+      // Initialize defaults
       updateFields();
     </script>
   </body>
