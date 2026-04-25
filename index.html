@@ -56,6 +56,13 @@
         margin: 2rem 0;
       }
 
+      label {
+        display: block;
+        margin-bottom: 0.25rem;
+        font-size: 0.875rem;
+        color: var(--subtext);
+      }
+
       select,
       input {
         padding: 0.5rem 0.75rem;
@@ -63,6 +70,9 @@
         border: 1px solid #d1d5db;
         border-radius: 0.5rem;
         font-size: 1rem;
+        box-sizing: border-box;
+        background: var(--card);
+        color: var(--text);
       }
 
       button {
@@ -76,6 +86,51 @@
         font-weight: 600;
       }
 
+      /* ── Free Tools tabs ── */
+      .free-tools-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--subtext);
+        margin-bottom: 0.5rem;
+      }
+
+      .tab-bar {
+        display: flex;
+        gap: 0;
+        border-bottom: 2px solid #e5e7eb;
+        margin-bottom: 1.5rem;
+      }
+
+      .tab-btn {
+        padding: 0.5rem 1.25rem;
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--subtext);
+        cursor: pointer;
+        border-radius: 0;
+        transition: color 0.15s, border-color 0.15s;
+      }
+
+      .tab-btn.active {
+        color: #2563eb;
+        border-bottom-color: #2563eb;
+      }
+
+      .tab-panel {
+        display: none;
+      }
+
+      .tab-panel.active {
+        display: block;
+      }
+
+      /* GEM panel */
       iframe {
         width: 100%;
         border: none;
@@ -83,6 +138,11 @@
         border-radius: 0.75rem;
         background: var(--card);
         transition: 0.25s ease background-color;
+      }
+
+      /* PBT panel */
+      #guardare-pbt-container {
+        min-height: 300px;
       }
     </style>
   </head>
@@ -112,26 +172,41 @@
           <label>Return URL</label>
           <input id="returnUrl" />
         </div>
-
-        <button onclick="loadWidget()">Load JS Widget</button>
       </div>
 
-      <hr style="margin: 2rem 0; opacity: 0.3;" />
+      <hr style="margin: 0 0 1.5rem 0; opacity: 0.3;" />
 
-      <!-- JS Widget Container -->
-      <h3 style="text-align:center;">JS Widget</h3>
-      <div id="guardare-signup-container"></div>
+      <!-- Free Tools section -->
+      <p class="free-tools-label">Free Tools</p>
 
-      <hr style="margin: 2rem 0; opacity: 0.3;" />
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('gem', this)">GEM</button>
+        <button class="tab-btn" onclick="switchTab('pbt', this)">PBT</button>
+      </div>
 
-      <!-- IFRAME EMBED -->
-      <h3 style="text-align:center;">Iframe Embed</h3>
-      <iframe
-        id="signupIframe"
-        src="https://preview.guardare.com/embed/sign-up"
-        allow="clipboard-write"
-        sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
-      ></iframe>
+      <!-- GEM Tab -->
+      <div id="tab-gem" class="tab-panel active">
+        <button onclick="loadGemWidget()" style="width:100%; margin-bottom:1.5rem;">Load JS Widget</button>
+
+        <hr style="margin: 0 0 1.5rem 0; opacity: 0.3;" />
+        <h3 style="text-align:center;">JS Widget</h3>
+        <div id="guardare-signup-container"></div>
+
+        <hr style="margin: 2rem 0; opacity: 0.3;" />
+        <h3 style="text-align:center;">Iframe Embed</h3>
+        <iframe
+          id="signupIframe"
+          src="https://preview.guardare.com/embed/sign-up"
+          allow="clipboard-write"
+          sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+        ></iframe>
+      </div>
+
+      <!-- PBT Tab -->
+      <div id="tab-pbt" class="tab-panel">
+        <button onclick="loadPbtWidget()" style="width:100%; margin-bottom:1.5rem;">Load PBT Widget</button>
+        <div id="guardare-pbt-container"></div>
+      </div>
     </div>
 
     <script>
@@ -140,50 +215,67 @@
         document.body.classList.toggle("dark");
       }
 
+      // Tab switching
+      function switchTab(tab, btn) {
+        document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+        document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+        document.getElementById("tab-" + tab).classList.add("active");
+        btn.classList.add("active");
+      }
+
       // Update fields based on selected environment
       function updateFields() {
         const base = document.getElementById("envSelect").value;
-
-        // Update return URL input
         document.getElementById("returnUrl").value = `${base}/set-password/`;
-
-        // Update iframe SRC
-        const iframe = document.getElementById("signupIframe");
-        iframe.src = `${base}/embed/sign-up`;
+        document.getElementById("signupIframe").src = `${base}/embed/sign-up`;
       }
 
-      // Load JS widget dynamically
-      function loadWidget() {
+      // Load GEM JS widget dynamically
+      function loadGemWidget() {
         const base = document.getElementById("envSelect").value;
         const ret = document.getElementById("returnUrl").value.trim();
 
-        // Remove existing script
-        const existing = document.getElementById("guardare-widget");
+        const existing = document.getElementById("guardare-widget-gem");
         if (existing) existing.remove();
 
-        // Clear container
         document.getElementById("guardare-signup-container").innerHTML = "";
 
-        // Inject new script
         const script = document.createElement("script");
-        script.id = "guardare-widget";
+        script.id = "guardare-widget-gem";
         script.src = `${base}/guardare-signup.js`;
         script.setAttribute("data-target", "#guardare-signup-container");
         script.setAttribute("data-return-url", ret);
 
         document.body.appendChild(script);
-
-        console.log("JS Widget Loaded:", script.src);
+        console.log("GEM Widget Loaded:", script.src);
       }
 
-      // Listen for iframe resize messages
+      // Load PBT widget dynamically
+      function loadPbtWidget() {
+        const base = document.getElementById("envSelect").value;
+        const ret = document.getElementById("returnUrl").value.trim();
+
+        const existing = document.getElementById("guardare-widget-pbt");
+        if (existing) existing.remove();
+
+        document.getElementById("guardare-pbt-container").innerHTML = "";
+
+        const script = document.createElement("script");
+        script.id = "guardare-widget-pbt";
+        script.src = `${base}/guardare-signup-pbt.js`;
+        script.setAttribute("data-target", "#guardare-pbt-container");
+        script.setAttribute("data-return-url", ret);
+
+        document.body.appendChild(script);
+        console.log("PBT Widget Loaded:", script.src);
+      }
+
+      // Listen for iframe resize messages (GEM iframe)
       window.addEventListener("message", (e) => {
         const base = document.getElementById("envSelect").value;
         const iframe = document.getElementById("signupIframe");
 
-        const allowedOrigin = base.replace("/embed/sign-up", "");
-
-        if (!e.origin.includes(allowedOrigin)) return;
+        if (!e.origin.startsWith(base.replace(/\/$/, ""))) return;
 
         if (e.data?.type === "resize" && e.data?.data?.height) {
           iframe.style.height = e.data.data.height + "px";
