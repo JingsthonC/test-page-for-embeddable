@@ -21,8 +21,7 @@
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Helvetica, Arial, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         background-color: var(--bg);
         color: var(--text);
         display: flex;
@@ -31,7 +30,9 @@
         min-height: 100vh;
         margin: 0;
         padding: 20px;
-        transition: 0.25s ease background-color, 0.25s ease color;
+        transition:
+          0.25s ease background-color,
+          0.25s ease color;
       }
 
       .container {
@@ -114,7 +115,9 @@
         color: var(--subtext);
         cursor: pointer;
         border-radius: 0;
-        transition: color 0.15s, border-color 0.15s;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
       }
 
       .tab-btn.active {
@@ -140,8 +143,8 @@
         transition: 0.25s ease background-color;
       }
 
-      /* PBT panel */
-      #guardare-pbt-container {
+      /* GDS panel */
+      #guardare-gds-container {
         min-height: 300px;
       }
     </style>
@@ -152,7 +155,7 @@
       <h1>Guardare Signup Widget Tester</h1>
 
       <!-- Dark Mode Toggle -->
-      <div style="text-align:center;">
+      <div style="text-align: center">
         <button onclick="toggleDarkMode()">Toggle Light/Dark Mode</button>
       </div>
 
@@ -174,26 +177,26 @@
         </div>
       </div>
 
-      <hr style="margin: 0 0 1.5rem 0; opacity: 0.3;" />
+      <hr style="margin: 0 0 1.5rem 0; opacity: 0.3" />
 
       <!-- Free Tools section -->
       <p class="free-tools-label">Free Tools</p>
 
       <div class="tab-bar">
         <button class="tab-btn active" onclick="switchTab('gem', this)">GEM</button>
-        <button class="tab-btn" onclick="switchTab('pbt', this)">PBT</button>
+        <button class="tab-btn" onclick="switchTab('gds', this)">GDS</button>
       </div>
 
       <!-- GEM Tab -->
       <div id="tab-gem" class="tab-panel active">
-        <button onclick="loadGemWidget()" style="width:100%; margin-bottom:1.5rem;">Load JS Widget</button>
+        <button onclick="loadGemWidget()" style="width: 100%; margin-bottom: 1.5rem">Load JS Widget</button>
 
-        <hr style="margin: 0 0 1.5rem 0; opacity: 0.3;" />
-        <h3 style="text-align:center;">JS Widget</h3>
+        <hr style="margin: 0 0 1.5rem 0; opacity: 0.3" />
+        <h3 style="text-align: center">JS Widget</h3>
         <div id="guardare-signup-container"></div>
 
-        <hr style="margin: 2rem 0; opacity: 0.3;" />
-        <h3 style="text-align:center;">Iframe Embed</h3>
+        <hr style="margin: 2rem 0; opacity: 0.3" />
+        <h3 style="text-align: center">Iframe Embed</h3>
         <iframe
           id="signupIframe"
           src="https://preview.guardare.com/embed/sign-up"
@@ -202,10 +205,10 @@
         ></iframe>
       </div>
 
-      <!-- PBT Tab -->
-      <div id="tab-pbt" class="tab-panel">
-        <button onclick="loadPbtWidget()" style="width:100%; margin-bottom:1.5rem;">Load PBT Widget</button>
-        <div id="guardare-pbt-container"></div>
+      <!-- GDS Tab -->
+      <div id="tab-gds" class="tab-panel">
+        <button onclick="loadGdsWidget()" style="width: 100%; margin-bottom: 1.5rem">Load GDS Widget</button>
+        <div id="guardare-gds-container"></div>
       </div>
     </div>
 
@@ -250,24 +253,25 @@
         console.log("GEM Widget Loaded:", script.src);
       }
 
-      // Load PBT widget dynamically
-      function loadPbtWidget() {
+      // Load GDS widget dynamically
+      function loadGdsWidget() {
         const base = document.getElementById("envSelect").value;
         const ret = document.getElementById("returnUrl").value.trim();
 
-        const existing = document.getElementById("guardare-widget-pbt");
+        const existing = document.getElementById("guardare-widget-gds");
         if (existing) existing.remove();
 
-        document.getElementById("guardare-pbt-container").innerHTML = "";
+        document.getElementById("guardare-gds-container").innerHTML = "";
 
         const script = document.createElement("script");
-        script.id = "guardare-widget-pbt";
-        script.src = `${base}/guardare-signup-pbt.js`;
-        script.setAttribute("data-target", "#guardare-pbt-container");
+        script.id = "guardare-widget-gds";
+        script.src = `${base}/guardare-signup.js`;
+        script.setAttribute("data-endpoint", "/api/v1/Company/free-gds");
+        script.setAttribute("data-target", "#guardare-gds-container");
         script.setAttribute("data-return-url", ret);
 
         document.body.appendChild(script);
-        console.log("PBT Widget Loaded:", script.src);
+        console.log("GDS Widget Loaded:", script.src);
       }
 
       // Listen for iframe resize messages (GEM iframe)
