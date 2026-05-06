@@ -130,17 +130,7 @@
       }
 
       .tab-panel.active {
-        display: block;
-      }
-
-      /* GEM panel */
-      iframe {
-        width: 100%;
-        border: none;
-        min-height: 600px;
-        border-radius: 0.75rem;
-        background: var(--card);
-        transition: 0.25s ease background-color;
+        display: none;
       }
 
       /* GDS panel */
@@ -191,7 +181,6 @@
       <div id="tab-gem" class="tab-panel active">
         <button onclick="loadGemWidget()" style="width: 100%; margin-bottom: 1.5rem">Load JS Widget</button>
         <div id="guardare-signup-container"></div>
-
       </div>
 
       <!-- GDS Tab -->
@@ -262,18 +251,6 @@
         document.body.appendChild(script);
         console.log("GDS Widget Loaded:", script.src);
       }
-
-      // Listen for iframe resize messages (GEM iframe)
-      window.addEventListener("message", (e) => {
-        const base = document.getElementById("envSelect").value;
-        const iframe = document.getElementById("signupIframe");
-
-        if (!e.origin.startsWith(base.replace(/\/$/, ""))) return;
-
-        if (e.data?.type === "resize" && e.data?.data?.height) {
-          iframe.style.height = e.data.data.height + "px";
-        }
-      });
 
       // Initialize defaults
       updateFields();
