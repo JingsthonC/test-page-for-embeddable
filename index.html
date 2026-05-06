@@ -218,6 +218,7 @@
         const script = document.createElement("script");
         script.id = "guardare-widget-gem";
         script.src = `${base}/guardare-signup.js`;
+        script.setAttribute("data-tool-name", "GEM");
         script.setAttribute("data-target", "#guardare-signup-container");
         script.setAttribute("data-return-url", ret);
 
@@ -238,7 +239,7 @@
         const script = document.createElement("script");
         script.id = "guardare-widget-gds";
         script.src = `${base}/guardare-signup.js`;
-        script.setAttribute("data-endpoint", "/api/v1/Company/free-gds");
+        script.setAttribute("data-tool-name", "DarkScan");
         script.setAttribute("data-target", "#guardare-gds-container");
         script.setAttribute("data-return-url", ret);
 
