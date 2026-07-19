@@ -178,12 +178,12 @@
 
         <div>
           <label>Return URL</label>
-          <input id="returnUrl" />
+          <input id="returnUrl" oninput="onReturnUrlChange()" />
         </div>
 
         <div>
           <label>Data Referrer &nbsp;→&nbsp; sent as <code>CompanyReferrer</code></label>
-          <input id="dataReferrer" value="Guardare" />
+          <input id="dataReferrer" value="Guardare" oninput="onDataReferrerChange()" />
         </div>
       </div>
 
@@ -395,22 +395,35 @@
         return lines.join("\n") + "\n><\/scr" + "ipt>";
       }
 
-      // Live-update the tool name in the current snippet as the user types
-      // (preserves any theme edits already in the box). Replaces an existing
-      // data-tool-name, or inserts one if the snippet doesn't have it yet.
-      function onCustomToolNameChange() {
+      // Replace an attribute in the current snippet, or insert it (after
+      // data-tool-name, else after src, else after <script) when missing.
+      // Preserves any theme edits already in the box.
+      function upsertSnippetAttr(attrName, value) {
         const ta = document.getElementById("customSnippet");
-        const tool = customToolName();
+        if (!ta) return;
+        const existing = new RegExp(`${attrName}="[^"]*"`);
         let v = ta.value;
-        if (/data-tool-name="[^"]*"/.test(v)) {
-          v = v.replace(/data-tool-name="[^"]*"/, () => `data-tool-name="${tool}"`);
+        if (existing.test(v)) {
+          v = v.replace(existing, () => `${attrName}="${value}"`);
+        } else if (/\n[ \t]*data-tool-name="[^"]*"/.test(v)) {
+          v = v.replace(/(\n([ \t]*)data-tool-name="[^"]*")/, (m, _l, indent) => `${m}\n${indent}${attrName}="${value}"`);
         } else if (/\n[ \t]*src="[^"]*"/.test(v)) {
-          // insert right after the src="..." line, matching its indentation
-          v = v.replace(/(\n([ \t]*)src="[^"]*")/, (m, _line, indent) => `${m}\n${indent}data-tool-name="${tool}"`);
+          v = v.replace(/(\n([ \t]*)src="[^"]*")/, (m, _l, indent) => `${m}\n${indent}${attrName}="${value}"`);
         } else {
-          v = v.replace(/<script/, () => `<script\n  data-tool-name="${tool}"`);
+          v = v.replace(/<script/, () => `<script\n  ${attrName}="${value}"`);
         }
         ta.value = v;
+      }
+
+      // Live-update the tool name / referrer in the snippet as the user types.
+      function onCustomToolNameChange() {
+        upsertSnippetAttr("data-tool-name", customToolName());
+      }
+      function onDataReferrerChange() {
+        upsertSnippetAttr("data-referrer", document.getElementById("dataReferrer").value.trim() || "Guardare");
+      }
+      function onReturnUrlChange() {
+        upsertSnippetAttr("data-return-url", document.getElementById("returnUrl").value.trim());
       }
 
       // "See the full script": every attribute listed at its DEFAULT value, so you
