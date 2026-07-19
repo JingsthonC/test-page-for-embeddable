@@ -200,6 +200,9 @@
         <button class="tab-btn" onclick="switchTab('custom', this)">Custom (themeable)</button>
       </div>
 
+      <!-- Loaded-script readout (updates on every load) -->
+      <p id="loadStatus" class="attr-ref" style="margin: -0.5rem 0 1.25rem">Nothing loaded yet.</p>
+
       <!-- GEM Tab -->
       <div id="tab-gem" class="tab-panel active">
         <button onclick="loadGemWidget()" style="width: 100%; margin-bottom: 1.5rem">Load JS Widget</button>
@@ -302,6 +305,31 @@
       function updateFields() {
         const base = document.getElementById("envSelect").value;
         document.getElementById("returnUrl").value = `${base}/set-password/`;
+        syncCustomSnippetEnv();
+      }
+
+      // Keep the custom snippet's env-dependent lines (src + data-return-url) in
+      // sync with the selected environment, so what you see is what gets loaded.
+      // Theme / tool-name / referrer edits are preserved.
+      function syncCustomSnippetEnv() {
+        const base = document.getElementById("envSelect").value;
+        const ret = document.getElementById("returnUrl").value.trim();
+        const ta = document.getElementById("customSnippet");
+        if (!ta) return;
+        let v = ta.value;
+        if (/src="[^"]*guardare-signup-custom\.js"/.test(v)) {
+          v = v.replace(/src="[^"]*guardare-signup-custom\.js"/, () => `src="${base}/guardare-signup-custom.js"`);
+        }
+        if (/data-return-url="[^"]*"/.test(v)) {
+          v = v.replace(/data-return-url="[^"]*"/, () => `data-return-url="${ret}"`);
+        }
+        ta.value = v;
+      }
+
+      // Show the actual script URL being used.
+      function setLoadStatus(url, toolName, targetId) {
+        document.getElementById("loadStatus").innerHTML =
+          `Loaded <code>${toolName}</code> from <code>${url}</code> → <code>#${targetId}</code>`;
       }
 
       // ── Old flexible widget (guardare-signup.js) ──────────────────────────
@@ -325,6 +353,7 @@
         script.setAttribute("data-referrer", ref);
 
         document.body.appendChild(script);
+        setLoadStatus(script.src, toolName, containerId);
         console.log(`${toolName} Widget Loaded:`, script.src, "| data-referrer:", ref);
       }
 
@@ -448,11 +477,13 @@
           return;
         }
 
+        const toolName = parsed.getAttribute("data-tool-name") || "GEM";
         const api = window.GuardareCustomSignupWidget;
         if (api && api.mount && loadedCustomBase === base) {
           // Already loaded for this env → re-mount in place (mount() destroys the
           // previous instance on the same container). No reload.
           api.mount(target, snippetToOptions(parsed, base));
+          setLoadStatus(`${base}/guardare-signup-custom.js`, toolName, "guardare-custom-container");
           console.log("Custom widget re-mounted (no reload).");
           return;
         }
@@ -474,6 +505,7 @@
           loadedCustomBase = base;
         };
         document.body.appendChild(script);
+        setLoadStatus(script.src, toolName, "guardare-custom-container");
         console.log("Custom widget bundle loaded:", script.src);
       }
 
