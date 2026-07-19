@@ -1,38 +1,10 @@
-
-Claude finished the response
-
-<!doctype html> <html lang="en"> <head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Guardare Signup Widget Test</title> <style> :root { --bg: #f3f4f6; --text: #111827; --subtext: #6b7280;
-
-pasted
-
-UPDATE THIS and add 1 more tab, it is "Source"
-
-
-Architected new tab integration maintaining existing structural patterns
-Architected new tab integration maintaining existing structural patterns
-Added a "Source" tab following the same pattern as GEM/GDS/STB — it gets its own tab button, panel, load button, and a loadSourceWidget() function that sets data-tool-name="Source" and targets #guardare-source-container. Tab bar now wraps if it runs out of horizontal space on narrower screens.
-
-
-Guardare signup widget test
-Code · HTML 
-
-Want to be notified when Claude responds?
-
-
-
-
-
-Claude is AI and can make mistakes. Please double-check responses.
-
-
-Guardare signup widget test · HTML
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Guardare Signup Widget Test</title>
- 
+
     <style>
       :root {
         --bg: #f3f4f6;
@@ -40,14 +12,14 @@ Guardare signup widget test · HTML
         --subtext: #6b7280;
         --card: #ffffff;
       }
- 
+
       .dark {
         --bg: #1f2937;
         --text: #f3f4f6;
         --subtext: #9ca3af;
         --card: #374151;
       }
- 
+
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         background-color: var(--bg);
@@ -62,7 +34,7 @@ Guardare signup widget test · HTML
           0.25s ease background-color,
           0.25s ease color;
       }
- 
+
       .container {
         background: var(--card);
         padding: 2rem;
@@ -73,27 +45,28 @@ Guardare signup widget test · HTML
         margin-top: 2rem;
         transition: 0.25s ease background-color;
       }
- 
+
       h1 {
         text-align: center;
       }
- 
+
       .controls {
         display: flex;
         flex-direction: column;
         gap: 1rem;
         margin: 2rem 0;
       }
- 
+
       label {
         display: block;
         margin-bottom: 0.25rem;
         font-size: 0.875rem;
         color: var(--subtext);
       }
- 
+
       select,
-      input {
+      input,
+      textarea {
         padding: 0.5rem 0.75rem;
         width: 100%;
         border: 1px solid #d1d5db;
@@ -103,7 +76,14 @@ Guardare signup widget test · HTML
         background: var(--card);
         color: var(--text);
       }
- 
+
+      textarea {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.82rem;
+        line-height: 1.5;
+        resize: vertical;
+      }
+
       button {
         padding: 0.75rem 1rem;
         border: none;
@@ -114,7 +94,7 @@ Guardare signup widget test · HTML
         font-size: 1rem;
         font-weight: 600;
       }
- 
+
       /* ── Free Tools tabs ── */
       .free-tools-label {
         font-size: 0.75rem;
@@ -124,7 +104,7 @@ Guardare signup widget test · HTML
         color: var(--subtext);
         margin-bottom: 0.5rem;
       }
- 
+
       .tab-bar {
         display: flex;
         gap: 0;
@@ -132,7 +112,7 @@ Guardare signup widget test · HTML
         margin-bottom: 1.5rem;
         flex-wrap: wrap;
       }
- 
+
       .tab-btn {
         padding: 0.5rem 1.25rem;
         background: none;
@@ -148,31 +128,42 @@ Guardare signup widget test · HTML
           color 0.15s,
           border-color 0.15s;
       }
- 
+
       .tab-btn.active {
         color: #2563eb;
         border-bottom-color: #2563eb;
       }
- 
+
       .tab-panel {
         display: none;
       }
- 
+
       .tab-panel.active {
         display: block;
       }
+
+      .attr-ref {
+        font-size: 0.75rem;
+        color: var(--subtext);
+        line-height: 1.7;
+        margin-top: 0.5rem;
+      }
+
+      .attr-ref code {
+        font-family: ui-monospace, monospace;
+      }
     </style>
   </head>
- 
+
   <body>
     <div class="container">
       <h1>Guardare Signup Widget Tester</h1>
- 
+
       <!-- Dark Mode Toggle -->
       <div style="text-align: center">
         <button onclick="toggleDarkMode()">Toggle Light/Dark Mode</button>
       </div>
- 
+
       <!-- Controls -->
       <div class="controls">
         <div>
@@ -184,57 +175,121 @@ Guardare signup widget test · HTML
             <option value="https://portal.guardare.com">portal.guardare.com</option>
           </select>
         </div>
- 
+
         <div>
           <label>Return URL</label>
           <input id="returnUrl" />
         </div>
+
+        <div>
+          <label>Data Referrer &nbsp;→&nbsp; sent as <code>CompanyReferrer</code></label>
+          <input id="dataReferrer" value="Guardare" />
+        </div>
       </div>
- 
+
       <hr style="margin: 0 0 1.5rem 0; opacity: 0.3" />
- 
+
       <!-- Free Tools section -->
       <p class="free-tools-label">Free Tools</p>
- 
+
       <div class="tab-bar">
         <button class="tab-btn active" onclick="switchTab('gem', this)">GEM</button>
         <button class="tab-btn" onclick="switchTab('gds', this)">GDS</button>
         <button class="tab-btn" onclick="switchTab('stb', this)">SOON TO BE</button>
         <button class="tab-btn" onclick="switchTab('source', this)">Source</button>
+        <button class="tab-btn" onclick="switchTab('custom', this)">Custom (themeable)</button>
       </div>
- 
+
       <!-- GEM Tab -->
       <div id="tab-gem" class="tab-panel active">
         <button onclick="loadGemWidget()" style="width: 100%; margin-bottom: 1.5rem">Load JS Widget</button>
         <div id="guardare-signup-container"></div>
       </div>
- 
+
       <!-- GDS Tab -->
       <div id="tab-gds" class="tab-panel">
         <button onclick="loadGdsWidget()" style="width: 100%; margin-bottom: 1.5rem">Load GDS Widget</button>
         <div id="guardare-gds-container"></div>
       </div>
- 
+
+      <!-- STB Tab -->
+      <div id="tab-stb" class="tab-panel">
+        <button onclick="loadStbWidget()" style="width: 100%; margin-bottom: 1.5rem">Load Soon to be Widget</button>
+        <div id="guardare-stb-container"></div>
+      </div>
+
       <!-- Source Tab -->
       <div id="tab-source" class="tab-panel">
         <button onclick="loadSourceWidget()" style="width: 100%; margin-bottom: 1.5rem">Load Source Widget</button>
         <div id="guardare-source-container"></div>
       </div>
 
-     <!-- STB Tab -->
-      <div id="tab-stb" class="tab-panel">
-        <button onclick="loadStbWidget()" style="width: 100%; margin-bottom: 1.5rem">Load Soon to be Widget</button>
-        <div id="guardare-stb-container"></div>
+      <!-- Custom (themeable) Tab -->
+      <div id="tab-custom" class="tab-panel">
+        <div style="margin-bottom: 1rem">
+          <label for="customToolName">
+            Tool name &nbsp;→&nbsp; endpoint <code>/free-tools/{name}</code>
+          </label>
+          <input
+            id="customToolName"
+            value="GEM"
+            placeholder="e.g. GEM, DarkScan, Source"
+            oninput="onCustomToolNameChange()"
+          />
+        </div>
+
+        <label>
+          Embed snippet — edit <code>data-tool-name</code>, <code>data-referrer</code>,
+          <code>data-toast-position</code>, and any <code>data-theme-*</code>.
+          The <strong>src</strong> uses the selected environment when you click Load.
+        </label>
+        <textarea id="customSnippet" rows="13" spellcheck="false"></textarea>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0 1rem">
+          <button type="button" onclick="loadCustomWidget()" style="flex: 1 1 100%">Load Custom Widget</button>
+          <button type="button" onclick="useDefaultStyling()" style="flex: 1; background: #7e4cd1">
+            Use default styling
+          </button>
+          <button type="button" onclick="showAllAttributes()" style="flex: 1; background: #6b7280">
+            Show all attributes
+          </button>
+        </div>
+
+        <details style="margin-bottom: 1.5rem">
+          <summary style="cursor: pointer; color: var(--subtext); font-size: 0.8rem; font-weight: 600">
+            Available attributes
+          </summary>
+          <div class="attr-ref">
+            <p>
+              <strong>Functional:</strong> <code>data-tool-name</code> (endpoint
+              <code>/free-tools/{name}</code>), <code>data-referrer</code> (→ CompanyReferrer, default
+              "Guardare"), <code>data-return-url</code>, <code>data-target</code>.
+            </p>
+            <p>
+              <strong>Toast position:</strong> <code>data-toast-position</code> = center | top | bottom |
+              top-left | top-right | bottom-left | bottom-right.
+            </p>
+            <p>
+              <strong>Theme (data-theme-*):</strong> form-bg, form-padding, form-max-width, field-gap,
+              font-family, label-color, label-size, label-weight, input-font-size, input-bg, input-text,
+              input-placeholder, input-border, input-border-width, input-radius, input-focus-ring,
+              input-padding-y, button-bg, button-hover-bg, button-text, button-radius, button-font-size,
+              button-weight, button-padding-y, accent, error, toast-bg, toast-text, toast-radius,
+              toast-shadow, toast-accent.
+            </p>
+          </div>
+        </details>
+
+        <div id="guardare-custom-container"></div>
       </div>
- 
     </div>
- 
+
     <script>
       // 🌙 Toggle Dark/Light Mode
       function toggleDarkMode() {
         document.body.classList.toggle("dark");
       }
- 
+
       // Tab switching
       function switchTab(tab, btn) {
         document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
@@ -242,100 +297,200 @@ Guardare signup widget test · HTML
         document.getElementById("tab-" + tab).classList.add("active");
         btn.classList.add("active");
       }
- 
+
       // Update fields based on selected environment
       function updateFields() {
         const base = document.getElementById("envSelect").value;
         document.getElementById("returnUrl").value = `${base}/set-password/`;
       }
- 
-      // Load GEM JS widget dynamically
+
+      // ── Old flexible widget (guardare-signup.js) ──────────────────────────
+      // Shared loader: name = data-tool-name, containerId = mount target,
+      // scriptId = unique id so it can be reloaded.
+      function loadFlexibleWidget(scriptId, toolName, containerId) {
+        const base = document.getElementById("envSelect").value;
+        const ret = document.getElementById("returnUrl").value.trim();
+        const ref = document.getElementById("dataReferrer").value.trim() || "Guardare";
+
+        const existing = document.getElementById(scriptId);
+        if (existing) existing.remove();
+        document.getElementById(containerId).innerHTML = "";
+
+        const script = document.createElement("script");
+        script.id = scriptId;
+        script.src = `${base}/guardare-signup.js`;
+        script.setAttribute("data-tool-name", toolName);
+        script.setAttribute("data-target", "#" + containerId);
+        script.setAttribute("data-return-url", ret);
+        script.setAttribute("data-referrer", ref);
+
+        document.body.appendChild(script);
+        console.log(`${toolName} Widget Loaded:`, script.src, "| data-referrer:", ref);
+      }
+
       function loadGemWidget() {
-        const base = document.getElementById("envSelect").value;
-        const ret = document.getElementById("returnUrl").value.trim();
- 
-        const existing = document.getElementById("guardare-widget-gem");
-        if (existing) existing.remove();
- 
-        document.getElementById("guardare-signup-container").innerHTML = "";
- 
-        const script = document.createElement("script");
-        script.id = "guardare-widget-gem";
-        script.src = `${base}/guardare-signup.js`;
-        script.setAttribute("data-tool-name", "GEM");
-        script.setAttribute("data-target", "#guardare-signup-container");
-        script.setAttribute("data-return-url", ret);
- 
-        document.body.appendChild(script);
-        console.log("GEM Widget Loaded:", script.src);
+        loadFlexibleWidget("guardare-widget-gem", "GEM", "guardare-signup-container");
       }
- 
-      // Load GDS widget dynamically
       function loadGdsWidget() {
-        const base = document.getElementById("envSelect").value;
-        const ret = document.getElementById("returnUrl").value.trim();
- 
-        const existing = document.getElementById("guardare-widget-gds");
-        if (existing) existing.remove();
- 
-        document.getElementById("guardare-gds-container").innerHTML = "";
- 
-        const script = document.createElement("script");
-        script.id = "guardare-widget-gds";
-        script.src = `${base}/guardare-signup.js`;
-        script.setAttribute("data-tool-name", "DarkScan");
-        script.setAttribute("data-target", "#guardare-gds-container");
-        script.setAttribute("data-return-url", ret);
- 
-        document.body.appendChild(script);
-        console.log("GDS Widget Loaded:", script.src);
+        loadFlexibleWidget("guardare-widget-gds", "DarkScan", "guardare-gds-container");
       }
- 
-      // Load STB widget dynamically
       function loadStbWidget() {
-        const base = document.getElementById("envSelect").value;
-        const ret = document.getElementById("returnUrl").value.trim();
- 
-        const existing = document.getElementById("guardare-widget-stb");
-        if (existing) existing.remove();
- 
-        document.getElementById("guardare-stb-container").innerHTML = "";
- 
-        const script = document.createElement("script");
-        script.id = "guardare-widget-stb";
-        script.src = `${base}/guardare-signup.js`;
-        script.setAttribute("data-tool-name", "SoonToBe");
-        script.setAttribute("data-target", "#guardare-stb-container");
-        script.setAttribute("data-return-url", ret);
- 
-        document.body.appendChild(script);
-        console.log("SoonToBe Widget Loaded:", script.src);
+        loadFlexibleWidget("guardare-widget-stb", "SoonToBe", "guardare-stb-container");
       }
- 
-      // Load Source widget dynamically
       function loadSourceWidget() {
+        loadFlexibleWidget("guardare-widget-source", "Source", "guardare-source-container");
+      }
+
+      // ── New customizable widget (guardare-signup-custom.js) ───────────────
+      // Track which environment's bundle is loaded so we can re-mount (fast, no
+      // page reload) instead of re-injecting/re-executing the whole script.
+      let loadedCustomBase = null;
+
+      // DEFAULT = built-in styling. The widget's defaults handle the look, so you
+      // only pass the tool name + return URL (+ referrer if you changed it).
+      function customToolName() {
+        return (document.getElementById("customToolName").value.trim() || "GEM");
+      }
+
+      function buildDefaultSnippet() {
         const base = document.getElementById("envSelect").value;
         const ret = document.getElementById("returnUrl").value.trim();
- 
-        const existing = document.getElementById("guardare-widget-source");
-        if (existing) existing.remove();
- 
-        document.getElementById("guardare-source-container").innerHTML = "";
- 
-        const script = document.createElement("script");
-        script.id = "guardare-widget-source";
-        script.src = `${base}/guardare-signup.js`;
-        script.setAttribute("data-tool-name", "Source");
-        script.setAttribute("data-target", "#guardare-source-container");
-        script.setAttribute("data-return-url", ret);
- 
-        document.body.appendChild(script);
-        console.log("Source Widget Loaded:", script.src);
+        const ref = document.getElementById("dataReferrer").value.trim();
+        const lines = [
+          "<script",
+          `  src="${base}/guardare-signup-custom.js"`,
+          `  data-tool-name="${customToolName()}"`,
+          `  data-return-url="${ret}"`,
+        ];
+        if (ref && ref !== "Guardare") lines.push(`  data-referrer="${ref}"`);
+        return lines.join("\n") + "\n><\/scr" + "ipt>";
       }
- 
+
+      // Live-update the tool name in the current snippet as the user types
+      // (preserves any theme edits already in the box). Replaces an existing
+      // data-tool-name, or inserts one if the snippet doesn't have it yet.
+      function onCustomToolNameChange() {
+        const ta = document.getElementById("customSnippet");
+        const tool = customToolName();
+        let v = ta.value;
+        if (/data-tool-name="[^"]*"/.test(v)) {
+          v = v.replace(/data-tool-name="[^"]*"/, () => `data-tool-name="${tool}"`);
+        } else if (/\n[ \t]*src="[^"]*"/.test(v)) {
+          // insert right after the src="..." line, matching its indentation
+          v = v.replace(/(\n([ \t]*)src="[^"]*")/, (m, _line, indent) => `${m}\n${indent}data-tool-name="${tool}"`);
+        } else {
+          v = v.replace(/<script/, () => `<script\n  data-tool-name="${tool}"`);
+        }
+        ta.value = v;
+      }
+
+      // "See the full script": every attribute listed at its DEFAULT value, so you
+      // can inspect / tweak any knob. These values equal the built-in design.
+      function buildAllAttributesSnippet() {
+        const base = document.getElementById("envSelect").value;
+        const ret = document.getElementById("returnUrl").value.trim();
+        const ref = document.getElementById("dataReferrer").value.trim() || "Guardare";
+        return (
+          "<script\n" +
+          `  src="${base}/guardare-signup-custom.js"\n` +
+          `  data-tool-name="${customToolName()}"\n` +
+          `  data-referrer="${ref}"\n` +
+          `  data-return-url="${ret}"\n` +
+          `  data-toast-position="center"\n` +
+          `  data-theme-form-bg="#7e4cd1"\n` +
+          `  data-theme-label-color="#ffffff"\n` +
+          `  data-theme-input-bg="#e0dfe5"\n` +
+          `  data-theme-input-text="#111827"\n` +
+          `  data-theme-input-border="#151018"\n` +
+          `  data-theme-input-radius="29px"\n` +
+          `  data-theme-button-bg="#d6ff79"\n` +
+          `  data-theme-button-hover-bg="#ebff85"\n` +
+          `  data-theme-button-text="#000000"\n` +
+          `  data-theme-accent="#ffffff"\n` +
+          `  data-theme-font-family="Montserrat, Helvetica, Arial, sans-serif"\n` +
+          "><\/scr" + "ipt>"
+        );
+      }
+
+      // Convert the snippet's data-* attributes into mount() options.
+      function snippetToOptions(parsed, base) {
+        const attr = (n) => parsed.getAttribute(n);
+        const toolName = attr("data-tool-name") || "GEM";
+        const theme = {};
+        for (const a of parsed.attributes) {
+          if (a.name.indexOf("data-theme-") === 0) {
+            theme["--gc-" + a.name.slice("data-theme-".length)] = a.value;
+          }
+        }
+        return {
+          endpoint: attr("data-endpoint") || `/api/v1/Company/free-tools/${toolName}`,
+          returnUrl: attr("data-return-url") || undefined,
+          dataReferrer: attr("data-referrer") || "Guardare",
+          toastPosition: attr("data-toast-position") || "center",
+          scriptOrigin: base,
+          theme: theme,
+        };
+      }
+
+      // Load / re-load the customizable widget from the snippet box.
+      // First time for an environment: inject the bundle (it auto-mounts from the
+      // attributes). After that: re-mount via the widget's own mount() API — no
+      // script re-execution, so the page does NOT reload.
+      function loadCustomWidget() {
+        const base = document.getElementById("envSelect").value;
+        const target = "#guardare-custom-container";
+
+        const parsed = new DOMParser()
+          .parseFromString(document.getElementById("customSnippet").value, "text/html")
+          .querySelector("script");
+        if (!parsed) {
+          alert("Couldn't find a <script> tag in the box.");
+          return;
+        }
+
+        const api = window.GuardareCustomSignupWidget;
+        if (api && api.mount && loadedCustomBase === base) {
+          // Already loaded for this env → re-mount in place (mount() destroys the
+          // previous instance on the same container). No reload.
+          api.mount(target, snippetToOptions(parsed, base));
+          console.log("Custom widget re-mounted (no reload).");
+          return;
+        }
+
+        // First load for this environment — inject the bundle; it auto-mounts.
+        const old = document.getElementById("guardare-widget-custom");
+        if (old) old.remove();
+        document.getElementById("guardare-custom-container").innerHTML = "";
+
+        const script = document.createElement("script");
+        script.id = "guardare-widget-custom";
+        for (const a of parsed.attributes) {
+          if (a.name === "src" || a.name === "data-target") continue;
+          script.setAttribute(a.name, a.value);
+        }
+        script.src = `${base}/guardare-signup-custom.js`;
+        script.setAttribute("data-target", target);
+        script.onload = () => {
+          loadedCustomBase = base;
+        };
+        document.body.appendChild(script);
+        console.log("Custom widget bundle loaded:", script.src);
+      }
+
+      // "Use default styling": show the minimal snippet and load the default design.
+      function useDefaultStyling() {
+        document.getElementById("customSnippet").value = buildDefaultSnippet();
+        loadCustomWidget();
+      }
+
+      // "Show all attributes": reveal the full script (every knob) — does not load.
+      function showAllAttributes() {
+        document.getElementById("customSnippet").value = buildAllAttributesSnippet();
+      }
+
       // Initialize defaults
       updateFields();
+      document.getElementById("customSnippet").value = buildDefaultSnippet();
     </script>
   </body>
 </html>
- 
