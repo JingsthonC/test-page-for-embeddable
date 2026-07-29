@@ -177,11 +177,6 @@
         </div>
 
         <div>
-          <label>Return URL</label>
-          <input id="returnUrl" oninput="onReturnUrlChange()" />
-        </div>
-
-        <div>
           <label>Data Referrer &nbsp;→&nbsp; sent as <code>CompanyReferrer</code></label>
           <input id="dataReferrer" value="Guardare" oninput="onDataReferrerChange()" />
         </div>
@@ -266,7 +261,7 @@
             <p>
               <strong>Functional:</strong> <code>data-tool-name</code> (endpoint
               <code>/free-tools/{name}</code>), <code>data-referrer</code> (→ CompanyReferrer, default
-              "Guardare"), <code>data-return-url</code>, <code>data-target</code>.
+              "Guardare"), <code>data-target</code>.
             </p>
             <p>
               <strong>Toast position:</strong> <code>data-toast-position</code> = center | top | bottom |
@@ -303,25 +298,19 @@
 
       // Update fields based on selected environment
       function updateFields() {
-        const base = document.getElementById("envSelect").value;
-        document.getElementById("returnUrl").value = `${base}/set-password/`;
         syncCustomSnippetEnv();
       }
 
-      // Keep the custom snippet's env-dependent lines (src + data-return-url) in
-      // sync with the selected environment, so what you see is what gets loaded.
-      // Theme / tool-name / referrer edits are preserved.
+      // Keep the custom snippet's env-dependent src in sync with the selected
+      // environment, so what you see is what gets loaded. Theme / tool-name /
+      // referrer edits are preserved.
       function syncCustomSnippetEnv() {
         const base = document.getElementById("envSelect").value;
-        const ret = document.getElementById("returnUrl").value.trim();
         const ta = document.getElementById("customSnippet");
         if (!ta) return;
         let v = ta.value;
         if (/src="[^"]*guardare-signup-custom\.js"/.test(v)) {
           v = v.replace(/src="[^"]*guardare-signup-custom\.js"/, () => `src="${base}/guardare-signup-custom.js"`);
-        }
-        if (/data-return-url="[^"]*"/.test(v)) {
-          v = v.replace(/data-return-url="[^"]*"/, () => `data-return-url="${ret}"`);
         }
         ta.value = v;
       }
@@ -337,7 +326,6 @@
       // scriptId = unique id so it can be reloaded.
       function loadFlexibleWidget(scriptId, toolName, containerId) {
         const base = document.getElementById("envSelect").value;
-        const ret = document.getElementById("returnUrl").value.trim();
         const ref = document.getElementById("dataReferrer").value.trim() || "Guardare";
 
         const existing = document.getElementById(scriptId);
@@ -349,7 +337,6 @@
         script.src = `${base}/guardare-signup.js`;
         script.setAttribute("data-tool-name", toolName);
         script.setAttribute("data-target", "#" + containerId);
-        script.setAttribute("data-return-url", ret);
         script.setAttribute("data-referrer", ref);
 
         document.body.appendChild(script);
@@ -376,20 +363,18 @@
       let loadedCustomBase = null;
 
       // DEFAULT = built-in styling. The widget's defaults handle the look, so you
-      // only pass the tool name + return URL (+ referrer if you changed it).
+      // only pass the tool name (+ referrer if you changed it).
       function customToolName() {
         return (document.getElementById("customToolName").value.trim() || "GEM");
       }
 
       function buildDefaultSnippet() {
         const base = document.getElementById("envSelect").value;
-        const ret = document.getElementById("returnUrl").value.trim();
         const ref = document.getElementById("dataReferrer").value.trim();
         const lines = [
           "<script",
           `  src="${base}/guardare-signup-custom.js"`,
           `  data-tool-name="${customToolName()}"`,
-          `  data-return-url="${ret}"`,
         ];
         if (ref && ref !== "Guardare") lines.push(`  data-referrer="${ref}"`);
         return lines.join("\n") + "\n><\/scr" + "ipt>";
@@ -422,22 +407,17 @@
       function onDataReferrerChange() {
         upsertSnippetAttr("data-referrer", document.getElementById("dataReferrer").value.trim() || "Guardare");
       }
-      function onReturnUrlChange() {
-        upsertSnippetAttr("data-return-url", document.getElementById("returnUrl").value.trim());
-      }
 
       // "See the full script": every attribute listed at its DEFAULT value, so you
       // can inspect / tweak any knob. These values equal the built-in design.
       function buildAllAttributesSnippet() {
         const base = document.getElementById("envSelect").value;
-        const ret = document.getElementById("returnUrl").value.trim();
         const ref = document.getElementById("dataReferrer").value.trim() || "Guardare";
         return (
           "<script\n" +
           `  src="${base}/guardare-signup-custom.js"\n` +
           `  data-tool-name="${customToolName()}"\n` +
           `  data-referrer="${ref}"\n` +
-          `  data-return-url="${ret}"\n` +
           `  data-toast-position="center"\n` +
           `  data-theme-form-bg="#7e4cd1"\n` +
           `  data-theme-label-color="#ffffff"\n` +
@@ -466,7 +446,6 @@
         }
         return {
           endpoint: attr("data-endpoint") || `/api/v1/Company/free-tools/${toolName}`,
-          returnUrl: attr("data-return-url") || undefined,
           dataReferrer: attr("data-referrer") || "Guardare",
           toastPosition: attr("data-toast-position") || "center",
           scriptOrigin: base,
